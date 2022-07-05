@@ -4,6 +4,8 @@
 #include "Player.h"
 #include "Monster.h"
 #include "Pipe.h"
+#include "Brick.h"
+#include "Entity.h"
 
 #include <vector>
 
@@ -11,7 +13,7 @@ Map *map1;
 Map *map2;
 Player *player;
 //Monster *monster;
-std::vector<Pipe *> pipes;
+std::vector<Entity *> objects;
 
 SDL_Renderer *Game::renderer = nullptr;
 
@@ -49,7 +51,8 @@ void Game::Init( const char *title, int moveX, int moveY, bool fullscreen )
     map2 = new Map( "assets\\map.png", {0, 0, 1920, 1080}, {WIDTH, 0, WIDTH, HEIGHT} );
     player = new Player( "assets\\playerRight.png", {0, 0, 185, 185}, {600, 522, 100, 100} );
     //monster = new Monster( "assets\\monster.png", {0, 0, 20, 20}, {400, 200, 20, 20} );
-    pipes.push_back( new Pipe( "assets\\pipe.png", {0, 0, 322, 322}, {1047, 462, 161, 161} ) );
+    objects.push_back( new Pipe( "assets\\pipe.png", {0, 0, 322, 322}, {1047, 462, 161, 161} ) );
+    objects.push_back( new Brick( "assets\\brick.png", {0, 0, 400, 400}, {200, 300, 100, 100} ) );
 
 }
 
@@ -89,12 +92,11 @@ void Game::HandleEvents()
         }
     }
 
-
 }
 
 void Game::Update()
 {
-    CheckObstaclesCollisions();
+    CheckCollisions();
     if( isMoveDownPossible ) player->MoveEntityY( 20 );
     else player->isJump = false;
 
@@ -106,9 +108,8 @@ void Game::Update()
     {
         MoveRight();
     }
-    if( keyPressed[2] && !player->isJump && isMoveUpPossible )
+    if( keyPressed[2] && !player->isJump )
     {
-        isMoveUpPossible = false;
         player->isJump = true;
         player->SetMaxVelocity();
     }
@@ -131,9 +132,10 @@ void Game::Update()
     }
 
 
-    if( player->isJump )
+    if( player->isJump && isMoveUpPossible )
     {
         player->Jump();
+        if( !player->GetVelocity() ) isMoveUpPossible = false;
     }
 }
 
@@ -147,11 +149,10 @@ void Game::Render()
     player->DrawEntity();
     //monster->DrawEntity();
 
-    for( Pipe *obstacle : pipes )
+    for( Entity *object : objects )
     {
-        obstacle->DrawEntity();
+        object->DrawEntity();
     }
-
 
     SDL_RenderPresent( renderer );
 }
@@ -175,9 +176,9 @@ void Game::MoveLeft()
         map1->MoveEntityX( 4 );
         map2->MoveEntityX( 4 );
 
-        for( Pipe *obstacle : pipes )
+        for( Entity *object : objects )
         {
-            obstacle->MoveEntityX( 4 );
+            object->MoveEntityX( 4 );
         }
     }
 
@@ -199,9 +200,9 @@ void Game::MoveRight()
         map1->MoveEntityX( -4 );
         map2->MoveEntityX( -4 );
 
-        for( Pipe *obstacle : pipes )
+        for( Entity *object : objects )
         {
-            obstacle->MoveEntityX( -4 );
+            object->MoveEntityX( -4 );
         }
     }
 
@@ -232,38 +233,50 @@ void Game::CheckMapPosX()
     }
 }
 
-void Game::CheckObstaclesCollisions()
+void Game::CheckCollisions()
 {
     isMoveLeftPossible = true;
     isMoveRightPossible = true;
     isMoveDownPossible = true;
 
-    CheckPipesCollisions();
+    CheckObjectsCollisions();
     CheckGroundCollisions();
 }
 
-void Game::CheckPipesCollisions()
+void Game::CheckObjectsCollisions()
 {
-    for( Pipe *pipe : pipes )
+    for( Entity *object : objects )
     {
 
-        if( (abs(player->X() - (pipe->X() + pipe->W())) <= 2)
-         && ((player->Y() + player->H() + 20) > pipe->Y()) )
+        if( (abs(player->X() - (object->X() + object->W())) <= 2)
+         && ((player->Y() + player->H() + 20) > object->Y())
+         && (player->Y() < (object->Y() + object->H())) )
         {
             isMoveLeftPossible = false;
         }
 
-        if( (abs(player->X() + player->W() - pipe->X()) <= 2)
-         && ((player->Y() + player->H() + 20) > pipe->Y()) )
+        else if( (abs(player->X() + player->W() - object->X()) <= 2)
+         && ((player->Y() + player->H() + 20) > object->Y())
+         && (player->Y() < (object->Y() + object->H())) )
         {
             isMoveRightPossible = false;
         }
 
-        if( (abs(player->X() - pipe->X()) <= pipe->W())
-         && (abs((player->X() + player->W()) - (pipe->X() + pipe->W())) <= pipe->W())
-         && ((player->Y() + player->H() + 20) > pipe->Y()) )
+        else if( (abs(player->X() - object->X()) <= object->W())
+         && (abs((player->X() + player->W()) - (object->X() + object->W())) <= object->W())
+         && (player->Y() < (object->Y() + object->H()))
+         && (player->Y() > object->Y()) )
         {
-            player->SetPosY( pipe->Y() - player->H() );
+            player->SetPosY( object->Y() + object->H() );
+            isMoveUpPossible = false;
+        }
+
+        else if( (abs(player->X() - object->X()) <= object->W())
+         && (abs((player->X() + player->W()) - (object->X() + object->W())) <= object->W())
+         && ((player->Y() + player->H() + 20) > object->Y())
+         && ((player->Y() + player->H()) < (object->Y() + object->H())) )
+        {
+            player->SetPosY( object->Y() - player->H() );
             isMoveDownPossible = false;
         }
     }

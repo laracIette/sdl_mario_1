@@ -44,8 +44,8 @@ public:
 
 	static SDL_Renderer *renderer;
 
-    void CheckObstaclesCollisions();
-    void CheckPipesCollisions();
+    void CheckCollisions();
+    void CheckObjectsCollisions();
     void CheckGroundCollisions();
 
 };
