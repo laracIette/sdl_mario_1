@@ -12,8 +12,8 @@ class Entity
 
 public:
     Entity( const char *path, SDL_Rect src, SDL_Rect dest );
-    Entity();
-    ~Entity();
+    Entity() {}
+    ~Entity() {}
 
     void DrawEntity();
     void MoveEntityX( float X );

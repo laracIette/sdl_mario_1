@@ -6,6 +6,11 @@
 Entity::Entity( const char *path, SDL_Rect src, SDL_Rect dest )
 {
     tex = TextureManager::LoadTexture( path );
+    if( !tex )
+    {
+        std::cout << "Error creating '" << path << "'.\n" << SDL_GetError() << std::endl;
+    }
+
 
     this->src = src;
     this->dest = dest;
@@ -15,9 +20,6 @@ Entity::Entity( const char *path, SDL_Rect src, SDL_Rect dest )
 
 }
 
-Entity::~Entity()
-{
-}
 
 void Entity::DrawEntity()
 {

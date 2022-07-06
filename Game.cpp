@@ -3,52 +3,17 @@
 #include "Global.h"
 #include "Player.h"
 #include "Monster.h"
+#include "Entity.h"
 #include "Pipe.h"
 #include "Brick.h"
-#include "Entity.h"
 
 #include <vector>
 
-Map *map1;
-Map *map2;
-Player *player;
-//Monster *monster;
-std::vector<Entity *> objects;
 
-SDL_Renderer *Game::renderer = nullptr;
-
-Game::Game()
+void Game::Init()
 {
-}
-Game::~Game()
-{
-}
-
-
-void Game::Init( const char *title, int moveX, int moveY, bool fullscreen )
-{
-    int flags{0};
-    if( fullscreen )
-    {
-        flags = SDL_WINDOW_FULLSCREEN;
-        WIDTH = 1920;
-        HEIGHT = 1080;
-    }
-
-    if( !SDL_Init( SDL_INIT_EVERYTHING ) );
-    {
-        window = SDL_CreateWindow( title, moveX, moveY, WIDTH, HEIGHT, flags );
-        renderer = SDL_CreateRenderer( window, -1, 0 );
-        if( renderer )
-        {
-            SDL_SetRenderDrawColor( renderer, 0, 255, 0, 255 );
-        }
-
-        isRunning = true;
-    }
-
-    map1 = new Map( "assets\\map.png", {0, 0, 1920, 1080}, {0, 0, WIDTH, HEIGHT} );
-    map2 = new Map( "assets\\map.png", {0, 0, 1920, 1080}, {WIDTH, 0, WIDTH, HEIGHT} );
+    map1 = new Map( "assets\\map1.png", {0, 0, 1920, 1080}, {0, 0, WIDTH, HEIGHT} );
+    map2 = new Map( "assets\\map2.png", {0, 0, 1920, 1080}, {WIDTH, 0, WIDTH, HEIGHT} );
     player = new Player( "assets\\playerRight.png", {0, 0, 185, 185}, {600, 522, 100, 100} );
     //monster = new Monster( "assets\\monster.png", {0, 0, 20, 20}, {400, 200, 20, 20} );
     objects.push_back( new Pipe( "assets\\pipe.png", {0, 0, 322, 322}, {1047, 462, 161, 161} ) );
@@ -56,49 +21,12 @@ void Game::Init( const char *title, int moveX, int moveY, bool fullscreen )
 
 }
 
-
-void Game::HandleEvents()
-{
-
-    SDL_Event event;
-    while( SDL_PollEvent( &event ) )
-    {
-        switch( event.type )
-        {
-            case SDL_QUIT:
-                isRunning = false;
-                break;
-
-            case SDL_KEYDOWN:
-                for( int i{ 0 }; i < KEYS; ++i )
-                {
-                    if( event.key.keysym.sym != keyCode[i] ) continue;
-
-                    keyPressed[i] = true;
-                }
-                break;
-
-            case SDL_KEYUP:
-                for( int i{ 0 }; i < KEYS; ++i )
-                {
-                    if( event.key.keysym.sym != keyCode[i] ) continue;
-
-                    keyPressed[i] = false;
-                }
-                break;
-
-            default:
-                break;
-        }
-    }
-
-}
-
 void Game::Update()
 {
     CheckCollisions();
+
     if( isMoveDownPossible ) player->MoveEntityY( 20 );
-    else player->isJump = false;
+    else                     player->isJump = false;
 
     if( keyPressed[0] && isMoveLeftPossible )
     {
@@ -118,6 +46,7 @@ void Game::Update()
         player->isCrouch = true;
         player->Crouch();
     }
+
     CheckMapPosX();
 
 
@@ -137,31 +66,6 @@ void Game::Update()
         player->Jump();
         if( !player->GetVelocity() ) isMoveUpPossible = false;
     }
-}
-
-void Game::Render()
-{
-    SDL_RenderClear( renderer );
-
-
-    map1->DrawEntity();
-    map2->DrawEntity();
-    player->DrawEntity();
-    //monster->DrawEntity();
-
-    for( Entity *object : objects )
-    {
-        object->DrawEntity();
-    }
-
-    SDL_RenderPresent( renderer );
-}
-
-void Game::Clean()
-{
-    SDL_DestroyWindow( window );
-    SDL_DestroyRenderer( renderer );
-    SDL_Quit();
 }
 
 void Game::MoveLeft()

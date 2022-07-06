@@ -14,8 +14,8 @@ int main( int argc, char *argv[] )
     Uint32 frameStart;
     int frameTime;
 
-    game = new Game();
-    game->Init( "Windoz", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, false );
+    game = new Game( "Windoz", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, false );
+    game->Init();
 
     while( game->Running() )
     {
