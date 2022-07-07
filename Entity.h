@@ -22,6 +22,8 @@ public:
     void SetPosX( float X ) { moveX = X; }
     void SetPosY( float Y ) { moveY = Y; }
 
+    virtual void Motion() {}
+
     void ChangeEntityTexture( SDL_Texture *tex );
 
     int X() { return moveX; }
