@@ -6,5 +6,8 @@ class Pipe : public Entity
 {
 
 public:
-    using Entity::Entity;
+    Pipe( const char *path, SDL_Rect src, SDL_Rect dest )
+     : Entity( path, src, dest )
+    {
+    }
 };

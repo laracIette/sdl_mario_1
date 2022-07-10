@@ -5,5 +5,8 @@
 class Monster : public Entity
 {
 public:
-    using Entity::Entity;
+    Monster( const char *path, SDL_Rect src, SDL_Rect dest )
+     : Entity( path, src, dest )
+    {
+    }
 };

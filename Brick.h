@@ -4,11 +4,16 @@
 
 class Brick : public Entity
 {
-    int motionX{ 0 };
-    bool isLeft{ false };
+    int motionX;
+    bool isLeft;
 
 public:
-    using Entity::Entity;
+    Brick( const char *path, SDL_Rect src, SDL_Rect dest )
+     : Entity( path, src, dest )
+    {
+        isLeft = false;
+        motionX = 0;
+    }
 
     void Motion();
 };

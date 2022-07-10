@@ -7,8 +7,6 @@
 #include "Pipe.h"
 #include "Brick.h"
 
-#include <vector>
-
 void Game::Init()
 {
     map1 = new Map( "assets\\map1.png", {0, 0, 1920, 1080}, {0, 0, WIDTH, HEIGHT} );
@@ -17,7 +15,6 @@ void Game::Init()
     //monster = new Monster( "assets\\monster.png", {0, 0, 20, 20}, {400, 200, 20, 20} );
     objects.push_back( new Pipe( "assets\\pipe.png", {0, 0, 322, 322}, {1047, 462, 161, 161} ) );
     objects.push_back( new Brick( "assets\\brick.png", {0, 0, 400, 400}, {300, 200, 100, 100} ) );
-
 
 }
 

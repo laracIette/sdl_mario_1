@@ -4,15 +4,22 @@
 
 class Game : public GameSettings
 {
-    bool isMoveLeftPossible{ true };
-    bool isMoveRightPossible{ true };
-    bool isMoveUpPossible{ true };
-    bool isMoveDownPossible{ true };
+    bool isMoveLeftPossible;
+    bool isMoveRightPossible;
+    bool isMoveUpPossible;
+    bool isMoveDownPossible;
 
 public:
-    using GameSettings::GameSettings;
-    Game();
-    ~Game();
+    Game( const char *title, int moveX, int moveY, bool fullscreen )
+     : GameSettings( title, moveX, moveY, fullscreen )
+    {
+        isMoveLeftPossible = true;
+        isMoveRightPossible = true;
+        isMoveUpPossible = true;
+        isMoveDownPossible = true;
+    }
+    Game() {}
+    ~Game() {}
 
     void Init();
     void Update();

@@ -6,24 +6,21 @@
 
 class Player : public Entity, public EntityLife
 {
-    int jumpVelocity{ 40 };
+    int jumpVelocity;
 
-    SDL_Texture *crouchTexLeft{
-        TextureManager::LoadTexture( "assets\\playerCrouchLeft.png" )
-    };
-    SDL_Texture *crouchTexRight{
-        TextureManager::LoadTexture( "assets\\playerCrouchRight.png" )
-    };
-
-    SDL_Texture *playerTexLeft{
-        TextureManager::LoadTexture( "assets\\playerLeft.png" )
-    };
-    SDL_Texture *playerTexRight{
-        TextureManager::LoadTexture( "assets\\playerRight.png" )
-    };
+    SDL_Texture *crouchTexLeft, *crouchTexRight, *playerTexLeft, *playerTexRight;
 
 public:
-    using Entity::Entity;
+    Player( const char *path, SDL_Rect src, SDL_Rect dest )
+     : Entity( path, src, dest )
+    {
+        jumpVelocity = 40;
+
+        crouchTexLeft  = TextureManager::LoadTexture( "assets\\playerCrouchLeft.png" );
+        crouchTexRight = TextureManager::LoadTexture( "assets\\playerCrouchRight.png" );
+        playerTexLeft  = TextureManager::LoadTexture( "assets\\playerLeft.png" );
+        playerTexRight = TextureManager::LoadTexture( "assets\\playerRight.png" );
+    }
 
     void Jump();
 
@@ -35,7 +32,7 @@ public:
     void SetMaxVelocity() { jumpVelocity = 40; }
     int GetVelocity() { return jumpVelocity; }
 
-    bool isJump = false;
-    bool isCrouch = false;
-    bool isLeft = false;
+    bool isJump{ false };
+    bool isCrouch{ false };
+    bool isLeft{ false };
 };
